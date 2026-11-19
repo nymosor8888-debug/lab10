@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Зургийн цомог — Лаб 10</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header><h1>Зургийн цомог</h1></header>
+  <main>
+    <section class="controls">
+      <input id="search" type="search" placeholder="Нэрээр хайх...">
+      <select id="place-filter"><option value="">Бүх газар</option></select>
+      <span id="count"></span>
+    </section>
+
+    <section id="cards" class="cards"></section>
+
+    <section class="add">
+      <h2>Зураг нэмэх</h2>
+      <form id="add-form" novalidate>
+        <label>Нэр <input name="title"><small data-error="title"></small></label>
+        <label>Газар <input name="place"><small data-error="place"></small></label>
+        <label>Огноо <input name="date" type="date"><small data-error="date"></small></label>
+        <button type="submit">Нэмэх</button>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
