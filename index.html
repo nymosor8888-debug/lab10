@@ -15,7 +15,13 @@
       <span id="count"></span>
     </section>
 
+    <p id="storage-status" role="status" aria-live="polite" hidden></p>
     <section id="cards" class="cards"></section>
+
+    <section class="trash">
+      <h2>Хогийн сав <span id="trash-count" aria-label="Хогийн сав дахь зургийн тоо">0</span></h2>
+      <section id="trash-cards" class="cards"></section>
+    </section>
 
     <section class="add">
       <h2>Зураг нэмэх</h2>
@@ -23,10 +29,22 @@
         <label>Нэр <input name="title"><small data-error="title"></small></label>
         <label>Газар <input name="place"><small data-error="place"></small></label>
         <label>Огноо <input name="date" type="date"><small data-error="date"></small></label>
+        <label class="image-field">
+          Зураг
+          <input name="image" type="file" accept="image/*">
+          <small data-error="image"></small>
+        </label>
+        <small data-error="storage"></small>
+        <img id="image-preview" class="image-preview" src="" alt="Сонгосон зургийн урьдчилсан харагдалт" hidden>
         <button type="submit">Нэмэх</button>
       </form>
     </section>
   </main>
+  <dialog id="image-dialog" class="image-dialog" aria-labelledby="dialog-title">
+    <button id="dialog-close" class="dialog-close" type="button" aria-label="Хаах">×</button>
+    <h2 id="dialog-title"></h2>
+    <img id="dialog-image" src="" alt="">
+  </dialog>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

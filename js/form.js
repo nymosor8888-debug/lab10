@@ -19,8 +19,37 @@ export function validate(data) {
   );
 }
 
-export function bindAddForm(formEl, album, onAdded) {
-  formEl.addEventListener('submit', (e) => {
+export function bindAddForm(formEl, album, onAdded, nextId) {
+  const fileInput = formEl.querySelector('input[name="image"]');
+  const preview = formEl.querySelector('#image-preview');
+
+  fileInput?.addEventListener('change', () => {
+    const file = fileInput.files?.[0];
+    formEl.querySelector('[data-error="image"]').textContent = '';
+    preview.hidden = true;
+    preview.removeAttribute('src');
+
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      formEl.querySelector('[data-error="image"]').textContent = 'Зөвхөн зураг сонгоно уу';
+      fileInput.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      formEl.querySelector('[data-error="image"]').textContent = 'Зураг 5MB-аас бага байх ёстой';
+      fileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      preview.src = reader.result;
+      preview.hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(formEl));
     const errors = validate(data);
@@ -30,8 +59,36 @@ export function bindAddForm(formEl, album, onAdded) {
       if (el) el.textContent = msg;
     });
     if (Object.keys(errors).length) return;
-    album.add({ title: data.title.trim(), place: data.place.trim(), date: data.date });
+
+    const file = fileInput?.files?.[0];
+    let image = '';
+    if (file) {
+      image = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Зураг уншиж чадсангүй'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const added = album.add({
+      title: data.title.trim(),
+      place: data.place.trim(),
+      date: data.date,
+      image,
+      id: nextId?.(),
+    });
+    try {
+      await onAdded?.();
+    } catch (error) {
+      album.remove(added.id);
+      formEl.querySelector('[data-error="storage"]').textContent = 'Зургийг хадгалж чадсангүй. Дахин оролдоно уу.';
+      console.error(error);
+      return;
+    }
+
     formEl.reset();
-    onAdded?.();
+    preview.hidden = true;
+    preview.removeAttribute('src');
   });
 }
